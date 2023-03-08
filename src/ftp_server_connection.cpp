@@ -17,6 +17,7 @@
 #include <netdb.h>
 #include <string.h>
 #include "ftp_server_connection.h"
+#include "ftp_server_net_util.h"
 
 using namespace std;
 
@@ -27,7 +28,7 @@ int sendToRemote(const int sockDescriptor, const char* message, const int messag
 
 bool isConnectionReadyToRead(const int sockDescriptor, const int timeoutSec, const int timeoutUSec, bool& isError, bool&isTimedout)
 {
-    return true;
+    return isSocketReadyToRead(sockDescriptor, timeoutSec, timeoutUSec, isError, isTimedout);
 }
 
 int receiveFromRemote(const int sockDescriptor, char* message, int messageLength)

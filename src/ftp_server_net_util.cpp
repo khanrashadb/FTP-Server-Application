@@ -18,7 +18,9 @@
 #include <netdb.h>
 #include <string>
 #include <string.h>
+#include <ctime>
 #include "ftp_server_net_util.h"
+#include "ftp_server_connection.h"
 
 using namespace std;
 
@@ -48,7 +50,43 @@ int getPortFromSocketDescriptor(const int sockDescriptor)
 
 bool isSocketReadyToRead(const int sockDescriptor, const int timeoutSec, const int timeoutUSec, bool& isError, bool& isTimedout)
 {
-    return true;
+    double delay = timeoutSec + (0.000001 * timeoutUSec);
+    int messageLength = 1024;
+    char message[messageLength];
+    int bytesReturned = 0;
+
+    delay = delay * CLOCKS_PER_SEC;
+    clock_t now = clock();
+
+    isError = false;
+    isTimedout = false;
+
+    while((clock() - now) <= delay)
+    {
+        bytesReturned = receiveFromRemote(sockDescriptor, message, messageLength);
+
+        if(bytesReturned == -1)
+        {
+            isError = true;
+            break;
+        }
+
+        if(bytesReturned > 0)
+
+            break;
+    }
+
+    if(bytesReturned == 0)
+
+        isTimedout = true;
+
+    if(bytesReturned > 0)
+
+        return true;
+    
+    else 
+
+        return false;
 }
 
 char* getHostIPAddress()

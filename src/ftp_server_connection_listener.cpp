@@ -72,7 +72,7 @@ void startListenerSocket(char* port, int& listenerSockDescriptor, bool& succeded
 
 bool isListenerSocketReady(const int listenerSockDescriptor, const int timeoutSec, const int timeoutUSec, bool& isError, bool&isTimedout)
 {
-    return true;
+    return isSocketReadyToRead(listenerSockDescriptor, timeoutSec, timeoutUSec, isError, isTimedout);
 }
 
 void acceptClientConnection(const int listenerSockDescriptor, int& clientSockDescriptor)

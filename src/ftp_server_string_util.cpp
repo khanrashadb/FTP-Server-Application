@@ -108,16 +108,25 @@ void stripLeadingAndTrailingSpaces(char* str)
             startingIndex++;
     }
 
-    for(int j = startingIndex; j < i + 2; i++)
+    for(int j = startingIndex; j < i + 1; j++)
     {
         trimmedStr[j - startingIndex] = str[j];
     }
+
+    trimmedStr[i+1] = '\0';
 }
 
 void stripNewlineAtEnd(char* str)
 {
-    if(str[strlen(str) - 1] == '\n')
+    int i = 1;
 
-        str[strlen(str) - 1] = '\0';
+    while(str[strlen(str) - i] == '\n' && (strlen(str) - i) >= 0)
+    {
+        i++;
+    }
+
+    i--;
+
+    str[strlen(str) - i] = '\0';
 }
 
