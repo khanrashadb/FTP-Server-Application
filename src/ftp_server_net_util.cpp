@@ -1,45 +1,77 @@
 /**
  * @file ftp_server_net_util.cpp
- * @author Your Name, Student Number, Section, CSCI 460, VIU
+ * @author Rashad Khan, 658285853, S23N02, CSCI 460, VIU
  * @version 1.0.0
- * @date Date you have last modified your code in this file, e.g., August 05, 2021
+ * @date March 08, 20213
  *
- * Describe the major functionalities that are performed by the code in this file.
+ * Contains the function descriptions of the prototypes found in "ftp_server_net_util.h" file
  *
  */
 
+#include <iostream>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <string>
+#include <string.h>
+#include "ftp_server_net_util.h"
 
+using namespace std;
 
-//Include required library and custom header files.
+void closeSocket(int& sockDescriptor)
+{
+    close(sockDescriptor);
+}
 
+int getPortFromSocketDescriptor(const int sockDescriptor)
+{
+    int port;
+    struct sockaddr_in sin;
+    socklen_t len = sizeof(sin);
 
-//Implement all the functions prototyped in the header file ftp_server_net_util.h
+    if(getsockname(sockDescriptor, (struct sockaddr*)&sin, &len) == -1)
+    {
+        perror("getsockname");
+        return -1;
+    }
 
-//Start with a stub function definition for each prototyped function in order to avoid 
-//compiler errors. 
+    else
+    {
+        port = ntohs(sin.sin_port);
+        return port;
+    }
+}
 
-//A stub function contains an empty body with an appropriate return 
-//statement if the funtion has a return type. If you have a function prototyped as
-//  
-//      char* duplicate(char* original);
-//
-//Its stub function definition will be as follows:
-//      
-//      char* duplicate(char* original) {
-//
-//          return 0;
-//      } 
-//
-//A stub function of a void return type function does not need a return 
-// statement in its empty body. If you have a function prototyped as 
-//
-//      void reverse(char* str);
-//
-//Its stub function definition will be as follows:
-//
-//      void reverse(char* str) {
-//    
-//      }
-//
+bool isSocketReadyToRead(const int sockDescriptor, const int timeoutSec, const int timeoutUSec, bool& isError, bool& isTimedout)
+{
+    return true;
+}
 
+char* getHostIPAddress()
+{
+    char host[256];
+    int hostName;
+    struct hostent *host_entry;
 
+    hostName = gethostname(host, sizeof(host));
+
+    if (hostName == -1)
+    {
+        perror("gethostname");
+        exit(1);
+    }
+
+    host_entry = gethostbyname(host);
+
+    if (host_entry == NULL)
+    {
+        perror("gethostbyname");
+        exit(1);
+    }
+
+    return inet_ntoa(*((struct in_addr*) host_entry->h_addr_list[0]));
+}

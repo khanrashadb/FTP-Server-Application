@@ -1,45 +1,47 @@
 /**
  * @file ftp_server_connection.cpp
- * @author Your Name, Student Number, Section, CSCI 460, VIU
+ * @author Rashad Khan, 658285853, S23N02, CSCI 460, VIU
  * @version 1.0.0
- * @date Date you have last modified your code in this file, e.g., August 05, 2021
+ * @date March 08, 20213
  *
- * Describe the major functionalities that are performed by the code in this file.
+ * Contains the function descriptions of the prototypes found in "ftp_server_connection.h" file
  *
  */
 
+#include <iostream>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <string.h>
+#include "ftp_server_connection.h"
 
+using namespace std;
 
-//Include required library and custom header files.
+int sendToRemote(const int sockDescriptor, const char* message, const int messageLength)
+{
+    return send(sockDescriptor, message, messageLength, 0);
+}
 
+bool isConnectionReadyToRead(const int sockDescriptor, const int timeoutSec, const int timeoutUSec, bool& isError, bool&isTimedout)
+{
+    return true;
+}
 
-//Implement all the functions prototyped in the header file ftp_server_connection.h
+int receiveFromRemote(const int sockDescriptor, char* message, int messageLength)
+{
+    ssize_t bytesReturned = recv(sockDescriptor, message, messageLength, 0);
+    
+    if(bytesReturned >= 0)
 
-//Start with a stub function definition for each prototyped function in order to avoid 
-//compiler errors. 
+        message[bytesReturned] = '\0';
 
-//A stub function contains an empty body with an appropriate return 
-//statement if the funtion has a return type. If you have a function prototyped as
-//  
-//      char* duplicate(char* original);
-//
-//Its stub function definition will be as follows:
-//      
-//      char* duplicate(char* original) {
-//
-//          return 0;
-//      } 
-//
-//A stub function of a void return type function does not need a return 
-// statement in its empty body. If you have a function prototyped as 
-//
-//      void reverse(char* str);
-//
-//Its stub function definition will be as follows:
-//
-//      void reverse(char* str) {
-//    
-//      }
-//
+    return bytesReturned;
+}
 
-
+void closeConnection(int& sockDescriptor)
+{
+    close(sockDescriptor);
+}
