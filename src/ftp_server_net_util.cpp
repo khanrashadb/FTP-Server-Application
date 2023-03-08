@@ -24,6 +24,12 @@
 
 using namespace std;
 
+/** @brief converts the string to lowercase
+ *
+ *  Converts the characters of the string to lowercase
+ *
+ *  @param str a string that we will process
+ */
 void closeSocket(int& sockDescriptor)
 {
     close(sockDescriptor);

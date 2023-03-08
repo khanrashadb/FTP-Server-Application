@@ -15,6 +15,16 @@
 
 using namespace std;
 
+/** @brief Finds and replaces characters in a string
+ *
+ *  finds occurences of character 'find' in string str and 
+ *  replaces the character with character 'replace'
+ *
+ *  @param str a string that we will process
+ *  @param find a character we need to find in the string
+ *  @param replace a character we need to replace the 'find' character with
+ */
+
 void replaceAll(char* str, char find, char replace)
 {
     int size = strlen(str);
@@ -26,6 +36,16 @@ void replaceAll(char* str, char find, char replace)
             str[i] = replace;
     }
 }
+
+/** @brief Finds if string starts with given prefix
+ *
+ *  Searches the string for the given prefix and returns true if found
+ *
+ *  @param str a string that we will process
+ *  @param prefix the prefix we need to find 
+ * 
+ *  @return a bool result indiacting whether the string has the prefix or not
+ */
 
 bool startsWith(const char* str, const char* prefix)
 {
@@ -42,6 +62,15 @@ bool startsWith(const char* str, const char* prefix)
     return result;
 }
 
+/** @brief Finds if string starts contains given substring
+ *
+ *  Searches the string for the given substring and returns true if found
+ *
+ *  @param str a string that we will process
+ *  @param substr the substring we need to find 
+ * 
+ *  @return a bool result indiacting whether the string has the substring or not
+ */
 bool contains(const char* str, const char* substr)
 {
     bool result = false;
@@ -55,6 +84,12 @@ bool contains(const char* str, const char* substr)
     return result;
 }
 
+/** @brief converts the string to uppercase
+ *
+ *  Converts the characters of the string to uppercase
+ *
+ *  @param str a string that we will process
+ */
 void toUpper(char* str)
 {
     for(long unsigned int i = 0; i < strlen(str); i++)
@@ -63,6 +98,12 @@ void toUpper(char* str)
     }
 }
 
+/** @brief converts the string to lowercase
+ *
+ *  Converts the characters of the string to lowercase
+ *
+ *  @param str a string that we will process
+ */
 void toLower(char* str)
 {
     for(long unsigned int i = 0; i < strlen(str); i++)
@@ -71,6 +112,12 @@ void toLower(char* str)
     }
 }
 
+/** @brief Removes leading and trailing spaces from string
+ *
+ *  Removes all leading and trailing white spaces from string
+ *
+ *  @param str a string that we will process
+ */
 void stripLeadingAndTrailingSpaces(char* str)
 {
     int size = strlen(str);
@@ -114,8 +161,15 @@ void stripLeadingAndTrailingSpaces(char* str)
     }
 
     trimmedStr[i+1] = '\0';
+    strcpy(str, trimmedStr);
 }
 
+/** @brief Removes trailing newline characters
+ *
+ *  removes newline characters from the end of the string
+ *
+ *  @param str a string that we will process
+ */
 void stripNewlineAtEnd(char* str)
 {
     int i = 1;
