@@ -21,16 +21,48 @@
 
 using namespace std;
 
+/** @brief Send data to the remote computer
+ *
+ *  This function sends message of mesageLength to the remote computer
+ *
+ *  @param sockDescriptor file descriptor of the socket
+ *  @param message an array containing the message to be sent
+ *  @param messageLength the length of the message
+ *
+ *  @return an integer value denoting the status of the process
+ */
 int sendToRemote(const int sockDescriptor, const char* message, const int messageLength)
 {
     return send(sockDescriptor, message, messageLength, 0);
 }
 
+/** @brief Checks if Socket is ready to read data
+ *
+ *  This function waits for a given amount of time to check if any data is received from the remote computer.
+ *
+ *  @param sockDescriptor file descriptor of the socket
+ *  @param timeoutSec amount of time to wait in seconds
+ *  @param timeoutUSec amount of time to wait in micro seconds
+ *  @param isError boolean value denoting the occurance of an error
+ *  @param istimedout boolean value denoting the end of waiting period
+ *
+ *  @return a boolean value denoting if the socket is ready to read data or not 
+ */
 bool isConnectionReadyToRead(const int sockDescriptor, const int timeoutSec, const int timeoutUSec, bool& isError, bool&isTimedout)
 {
     return isSocketReadyToRead(sockDescriptor, timeoutSec, timeoutUSec, isError, isTimedout);
 }
 
+/** @brief Receives data from the remote computer
+ *
+ *  This function receives messages of upto mesageLength from the remote computer
+ *
+ *  @param sockDescriptor file descriptor of the socket
+ *  @param message an array containing the message to be sent
+ *  @param messageLength the length of the message
+ *
+ *  @return an integer value denoting the status of the process
+ */
 int receiveFromRemote(const int sockDescriptor, char* message, int messageLength)
 {
     ssize_t bytesReturned = recv(sockDescriptor, message, messageLength, 0);
@@ -41,6 +73,13 @@ int receiveFromRemote(const int sockDescriptor, char* message, int messageLength
 
     return bytesReturned;
 }
+
+/** @brief closes a socket
+ *
+ *  This function closes the socket defined by sockDescriptor
+ *
+ *  @param sockDescriptor file descriptor of the socket
+ */
 
 void closeConnection(int& sockDescriptor)
 {

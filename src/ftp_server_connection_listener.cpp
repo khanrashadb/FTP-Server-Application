@@ -21,6 +21,15 @@
 
 using namespace std;
 
+/** @brief Starts a listener socket
+ *
+ *  This function creates a socket binds it and starts listening for client connections
+ *
+ *  @param port the port to listen to
+ *  @param listenerSockDescriptor file descriptor of the listener socket
+ *  @param succeded a boolean value denoting the succes of the procedure
+ */
+
 void startListenerSocket(char* port, int& listenerSockDescriptor, bool& succeded)
 {
     bool errorFound = false;
@@ -70,17 +79,43 @@ void startListenerSocket(char* port, int& listenerSockDescriptor, bool& succeded
         succeded = true;
 }
 
+/** @brief Checks if Listener Socket is ready to read data
+ *
+ *  This function waits for a given amount of time to check if any data is received from the remote computer.
+ *
+ *  @param listenerSockDescriptor file descriptor of the socket
+ *  @param timeoutSec amount of time to wait in seconds
+ *  @param timeoutUSec amount of time to wait in micro seconds
+ *  @param isError boolean value denoting the occurance of an error
+ *  @param istimedout boolean value denoting the end of waiting period
+
+ *  @return a boolean value denoting if the socket is ready to read data or not 
+ */
 bool isListenerSocketReady(const int listenerSockDescriptor, const int timeoutSec, const int timeoutUSec, bool& isError, bool&isTimedout)
 {
     return isSocketReadyToRead(listenerSockDescriptor, timeoutSec, timeoutUSec, isError, isTimedout);
 }
 
+/** @brief Accepts a client connection
+ *
+ *  This function accepts client connections
+ *
+ *  @param listenerSockDescriptor file descriptor of the socket to be closed
+ *  @param clientSockDescriptor socket descriptor of the client
+ */
 void acceptClientConnection(const int listenerSockDescriptor, int& clientSockDescriptor)
 {
     struct sockaddr_storage client_addr;
     socklen_t sin_size = sizeof(client_addr);
     clientSockDescriptor = accept(listenerSockDescriptor, (struct sockaddr*)&client_addr, &sin_size);
 }
+
+/** @brief closes a socket
+ *
+ *  This function closes the socket defined by listenerSockDescriptor
+ *
+ *  @param listenerSockDescriptor file descriptor of the socket to be closed
+ */
 
 void closeListenerSocket(int& listenerSockDescriptor)
 {

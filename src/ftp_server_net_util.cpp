@@ -24,16 +24,26 @@
 
 using namespace std;
 
-/** @brief converts the string to lowercase
+/** @brief closes a socket
  *
- *  Converts the characters of the string to lowercase
+ *  This function closes the socket defined by sockDescriptor
  *
- *  @param str a string that we will process
+ *  @param sockDescriptor file descriptor of the socket
  */
+
 void closeSocket(int& sockDescriptor)
 {
     close(sockDescriptor);
 }
+
+/** @brief Retrieves port number from socketDescriptor
+ *
+ *  This function retrieves port number from socketDescriptor
+ *
+ *  @param sockDescriptor file descriptor of the socket
+ *
+ *  @return an integer value denoting prot number 
+ */
 
 int getPortFromSocketDescriptor(const int sockDescriptor)
 {
@@ -53,6 +63,19 @@ int getPortFromSocketDescriptor(const int sockDescriptor)
         return port;
     }
 }
+
+/** @brief Checks if Socket is ready to read data
+ *
+ *  This function waits for a given amount of time to check if any data is received from the remote computer.
+ *
+ *  @param sockDescriptor file descriptor of the socket
+ *  @param timeoutSec amount of time to wait in seconds
+ *  @param timeoutUSec amount of time to wait in micro seconds
+ *  @param isError boolean value denoting the occurance of an error
+ *  @param istimedout boolean value denoting the end of waiting period
+ *
+ *  @return a boolean value denoting if the socket is ready to read data or not 
+ */
 
 bool isSocketReadyToRead(const int sockDescriptor, const int timeoutSec, const int timeoutUSec, bool& isError, bool& isTimedout)
 {
@@ -94,6 +117,13 @@ bool isSocketReadyToRead(const int sockDescriptor, const int timeoutSec, const i
 
         return false;
 }
+
+/** @brief Retrieves Host IP
+ *
+ *  This function retrieves host name and IP
+ *
+ *  @return a character array containing the IP address 
+ */
 
 char* getHostIPAddress()
 {
