@@ -21,6 +21,7 @@
 #include <ctime>
 #include "ftp_server_net_util.h"
 #include "ftp_server_connection.h"
+#include "ftp_server_connection_listener.h"
 
 using namespace std;
 
@@ -79,43 +80,34 @@ int getPortFromSocketDescriptor(const int sockDescriptor)
 
 bool isSocketReadyToRead(const int sockDescriptor, const int timeoutSec, const int timeoutUSec, bool& isError, bool& isTimedout)
 {
-    double delay = timeoutSec + (0.000001 * timeoutUSec);
-    int messageLength = 1024;
-    char message[messageLength];
-    int bytesReturned = 0;
+    fd_set readfds;
+    struct timeval tv;
+    int valueReturned;
 
-    delay = delay * CLOCKS_PER_SEC;
-    clock_t now = clock();
+    tv.tv_sec = timeoutSec;
+    tv.tv_usec = timeoutUSec;
 
-    isError = false;
-    isTimedout = false;
+    FD_ZERO(&readfds);
+    FD_SET(sockDescriptor, &readfds);
+    
+    valueReturned = select(MAX_CLIENT_CONNECTIONS + 1, &readfds, NULL, NULL, &tv);
 
-    while((clock() - now) <= delay)
+    if(valueReturned == -1)
     {
-        bytesReturned = receiveFromRemote(sockDescriptor, message, messageLength);
-
-        if(bytesReturned == -1)
-        {
-            isError = true;
-            break;
-        }
-
-        if(bytesReturned > 0)
-
-            break;
+       isError = true;
+       return false;
     }
 
-    if(bytesReturned == 0)
+    else if(valueReturned == 0)
+    {
+       isTimedout = true;
+       return false;
+    }
 
-        isTimedout = true;
+    else
 
-    if(bytesReturned > 0)
+       return true;
 
-        return true;
-    
-    else 
-
-        return false;
 }
 
 /** @brief Retrieves Host IP
