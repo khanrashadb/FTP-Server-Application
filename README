@@ -1,38 +1,32 @@
-# Application Name 
+# FTP Server Application
 
-General descriptions of the application go here.
-
-
+This is an FTP server application that manages connection with client application
+and handles valid client requests by taking appropriate actions.
 
 
 ## Technologies
 
-The descriptions of the technologies that are used in this application go here. It includes dependencies or pre-requisites.
-
-
+This application was developed in an unix environment using C++ programming language, vim and VSCode editors, gdb debugger.
 
 
 ## Build, Run, Test, Installation, and Uninstallation
 
-Instructions on how to build, run, test, install, and uninstall the application go here.
+Build: 
 
-
+1. Type make to build the application.
+2. Type make run-server to run the server application.
+3. Type make test-deliverable2 to run unit tests on the application.
 
 
 ## Usage
 
-Instructions on how to run the application go here.
-
-
+Type make run-server to run the server application from one terminal window. Then type make eun-example-client from a different window to run the client application and connect with the server and send requests from the client and receive replies from the server.
 
 
 ## Contributors
 
-List of the contributors goes here.
-
-
-
+1. Rashad Khan
 
 ## License
 
-Terms and conditions or the types of licenses granted to use this application go here.
+This application should be used under a gpl license and should only be used for academic and research purposes.
