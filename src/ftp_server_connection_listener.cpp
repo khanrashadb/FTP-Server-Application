@@ -75,8 +75,10 @@ void startListenerSocket(char* port, int& listenerSockDescriptor, bool& succeded
     }
 
     if(errorFound == false)
-    
+    {
+        cout << "FTP Server Port: " << getPortFromSocketDescriptor(listenerSockDescriptor) << " is waiting for client connection.........\n";
         succeded = true;
+    }
 }
 
 /** @brief Checks if Listener Socket is ready to read data
@@ -108,6 +110,8 @@ void acceptClientConnection(const int listenerSockDescriptor, int& clientSockDes
     struct sockaddr_storage client_addr;
     socklen_t sin_size = sizeof(client_addr);
     clientSockDescriptor = accept(listenerSockDescriptor, (struct sockaddr*)&client_addr, &sin_size);
+    
+    cout << "FTP Server: Client connection accepted\n";
 }
 
 /** @brief closes a socket

@@ -12,10 +12,13 @@
 #include <string>
 #include <string.h>
 #include <unistd.h>
+#include <sstream>
 #include "ftp_server_session.h"
 #include "ftp_server_connection.h"
 #include "ftp_server_response.h"
 #include "ftp_server_request.h"
+#include "ftp_server_passive.h"
+#include "ftp_server_nlist.h"
 
 using namespace std;
 
@@ -35,6 +38,8 @@ void interpretFtpRequest(const char* ftpRequest, ClientFtpSession& clientFtpSess
     char* requestName = new char[FTP_REQUEST_CODE_CHARACTER_COUNT];
     char* requestArgument = new char[FTP_REQUEST_ARG_MAX_CHARACTER_COUNT];
 
+    cout << "FTP Server: Received command " << ftpRequest << "\n";
+    
     parseFtpRequest(ftpRequest, requestName, requestArgument);
 
     if(strcmp(requestName, FTP_REQUEST_USER) == 0)
@@ -46,9 +51,9 @@ void interpretFtpRequest(const char* ftpRequest, ClientFtpSession& clientFtpSess
         handleFtpRequestPASS(requestArgument, clientFtpSession);
         
     else if(strcmp(requestName, FTP_REQUEST_PWD) == 0)
-
+    
         handleFtpRequestPWD(clientFtpSession);
-
+    
     else if(strcmp(requestName, FTP_REQUEST_CWD) == 0)
 
         handleFtpRequestCWD(requestArgument, clientFtpSession);
@@ -60,6 +65,14 @@ void interpretFtpRequest(const char* ftpRequest, ClientFtpSession& clientFtpSess
     else if(strcmp(requestName, FTP_REQUEST_QUIT) == 0)
 
         handleFtpRequestQUIT(clientFtpSession);
+
+    else if(strcmp(requestName, FTP_REQUEST_PASV) == 0)
+
+        handleFtpRequestPASV(clientFtpSession);
+
+    else if(strcmp(requestName, FTP_REQUEST_NLST) == 0)
+
+        handleFtpRequestNLST(clientFtpSession);
 
     else
 
@@ -81,16 +94,25 @@ void interpretFtpRequest(const char* ftpRequest, ClientFtpSession& clientFtpSess
 
 void parseFtpRequest(const char* ftpRequest, char* requestName, char* requestArgument)
 {
-    char req[FTP_REQUEST_ARG_MAX_CHARACTER_COUNT];
-    strcpy(req, ftpRequest);
-    char* ptr = strtok(req, FTP_REQUEST_DELIMITER);
-    strcpy(requestName, ptr);
-
-    if(ptr != NULL)
+    string req(ftpRequest);
+    string ignore, command, arg;
+    stringstream ss;
+    ss << req;
+    
+    if(req.find(FTP_REQUEST_USER) != string::npos
+        || req.find(FTP_REQUEST_PASSWORD) != string::npos
+            || req.find(FTP_REQUEST_CWD) != string::npos
+                || req.find(FTP_REQUEST_RETR) != string::npos)
     {
-        ptr = strtok(NULL, FTP_REQUEST_DELIMITER);
-        strcpy(requestArgument, FTP_REQUEST_DELIMITER);
+        ss >> command;
+        strcpy(requestName, command.c_str());
+        ss >> arg;
+        strcpy(requestArgument, arg.c_str());
     }
+
+    else 
+
+        strcpy(requestName, req.c_str());
 }
 
 /** @brief hyandles request user
@@ -120,12 +142,11 @@ void handleFtpRequestUSER(const char* username, ClientFtpSession& clientFtpSessi
         int status = sendToRemote(clientFtpSession.controlConnection, INVALID_USERNAME_RESPONSE, strlen(INVALID_USERNAME_RESPONSE));
     
         if(status < 0)
-
+        {
             cout << "Encountered an error while sending data\n"; 
-
-	//sleep(2);
-
-	stopClientFTPSession(clientFtpSession);
+        }
+	    
+        stopClientFTPSession(clientFtpSession);
     }
 }
 
@@ -327,12 +348,50 @@ void handleFtpRequestCDUP(ClientFtpSession& clientFtpSession)
 
 void handleFtpRequestPASV(ClientFtpSession& clientFtpSession)
 {
+    if(clientFtpSession.isLoggedIn == false)
 
+        handleNotLoggedIn(clientFtpSession);
+    
+    else 
+
+        enteringIntoPassive(clientFtpSession);
 }
 
 void handleFtpRequestNLST(ClientFtpSession& clientFtpSession)
 {
+    int numEntries;
+    char buffer[256]; 
 
+    if(clientFtpSession.isLoggedIn == false)
+
+        handleNotLoggedIn(clientFtpSession);
+
+    else
+    {
+        if(clientFtpSession.dataConnection < 0)
+        {
+            int status = sendToRemote(clientFtpSession.controlConnection, DATA_OPEN_CONNECTION_ERROR_RESPONSE, strlen(DATA_OPEN_CONNECTION_ERROR_RESPONSE));
+    
+            if(status < 0)
+
+                cout << "Encountered an error while sending data\n";
+        }
+
+        else
+        {
+            numEntries = listDirEntries(clientFtpSession.dataConnection);
+
+            sprintf(buffer, NLST_CONNECTION_CLOSE_RESPONSE, numEntries);
+            
+            int status = sendToRemote(clientFtpSession.controlConnection, buffer, strlen(buffer));
+    
+            if(status < 0)
+
+                cout << "Encountered an error while sending data\n";
+
+            closeConnection(clientFtpSession.dataConnection);
+        }
+    }
 }
 
 void handleFtpRequestRETR(const char* file, ClientFtpSession& clientFtpSession)

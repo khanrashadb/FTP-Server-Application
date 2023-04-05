@@ -9,19 +9,70 @@
  */
 
 #include <iostream>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
+#include <dirent.h>
+#include <string>
 #include <string.h>
 #include "ftp_server_connection_listener.h"
 #include "ftp_server_nlist.h"
+#include "ftp_server_connection.h"
 
 using namespace std;
 
 int listDirEntries(int dataSockDescriptor)
 {
-    return 1;
+    DIR* directory;
+    struct dirent* directoryEntry;
+    string fileName, entryInfo; 
+    string fileType = "U";
+    int numEntries = 0;
+    unsigned short fileSize;
+
+    if((directory = opendir(DEFAULT_DIRECTORY_PATH)) == NULL)
+    {
+        perror("opendir() failed");
+    }
+    else
+    {
+        errno = 0;
+
+        while((directoryEntry = readdir(directory)))
+        {
+            fileName = directoryEntry->d_name;
+
+            if(directoryEntry->d_type == DT_DIR)  // Determining the file type 
+            {
+                fileType = "D";
+            }
+
+            else if(directoryEntry->d_type == DT_REG) 
+            {
+                fileType = "F";
+            }
+
+            if(fileType == "F") // This entry is a regular file so determining its size
+            {
+                fileSize = directoryEntry->d_reclen;
+                entryInfo = fileType + "       " + fileName + "            " + to_string(fileSize) + "\n";
+            }
+
+            else
+
+                entryInfo = fileType + "       " + fileName + "\n";
+
+            numEntries++;
+
+            int status = sendToRemote(dataSockDescriptor, entryInfo.c_str(), strlen(entryInfo.c_str()));
+    
+            if(status < 0)
+
+                cout << "Encountered an error while sending data\n";
+        }
+
+        if(errno != 0)
+        {
+            perror("readdir() failed");
+        }
+    }
+
+    return numEntries;
 }

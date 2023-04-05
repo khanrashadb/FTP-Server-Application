@@ -78,12 +78,12 @@ void startClientFTPSession(ClientFtpSession& clientFtpSession)
                 stopClientFTPSession(clientFtpSession);
             }
 
-	    else if(isError == true)
-	    {
-		status = sendToRemote(clientFtpSession.controlConnection, INTERNAL_ERROR_RESPONSE, strlen(INTERNAL_ERROR_RESPONSE));
+	        else if(isError == true)
+	        {
+		        status = sendToRemote(clientFtpSession.controlConnection, INTERNAL_ERROR_RESPONSE, strlen(INTERNAL_ERROR_RESPONSE));
 
-		stopClientFTPSession(clientFtpSession);
-	    }
+		        stopClientFTPSession(clientFtpSession);
+	        }
         }
     }   
 }
