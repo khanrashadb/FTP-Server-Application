@@ -2,7 +2,7 @@
  * @file ftp_server_request.cpp
  * @author Rashad Khan, 658285853, S23N02, CSCI 460, VIU
  * @version 1.0.0
- * @date March 22, 20213
+ * @date April 05, 20213
  *
  * Contains the function descriptions of the prototypes found in "ftp_server_request.h" file
  *
@@ -19,6 +19,7 @@
 #include "ftp_server_request.h"
 #include "ftp_server_passive.h"
 #include "ftp_server_nlist.h"
+#include "ftp_server_retrieve.h"
 
 using namespace std;
 
@@ -73,6 +74,10 @@ void interpretFtpRequest(const char* ftpRequest, ClientFtpSession& clientFtpSess
     else if(strcmp(requestName, FTP_REQUEST_NLST) == 0)
 
         handleFtpRequestNLST(clientFtpSession);
+
+    else if(strcmp(requestName, FTP_REQUEST_RETR) == 0)
+
+        handleFtpRequestRETR(requestArgument, clientFtpSession);    
 
     else
 
@@ -346,6 +351,12 @@ void handleFtpRequestCDUP(ClientFtpSession& clientFtpSession)
     }
 }
 
+/** @brief handles request PASSV
+ *
+ *  This enters passive mode to open a data connection
+ *
+ *  @param clientFtpSession an object of type clientFtpSession to hold session status data
+ */
 void handleFtpRequestPASV(ClientFtpSession& clientFtpSession)
 {
     if(clientFtpSession.isLoggedIn == false)
@@ -357,6 +368,12 @@ void handleFtpRequestPASV(ClientFtpSession& clientFtpSession)
         enteringIntoPassive(clientFtpSession);
 }
 
+/** @brief handles request NLST
+ *
+ *  This function lists entries in a directory
+ *
+ *  @param clientFtpSession an object of type clientFtpSession to hold session status data
+ */
 void handleFtpRequestNLST(ClientFtpSession& clientFtpSession)
 {
     int numEntries;
@@ -394,9 +411,104 @@ void handleFtpRequestNLST(ClientFtpSession& clientFtpSession)
     }
 }
 
+/** @brief handles request RETR
+ *
+ *  This function sends files to FTP client
+ *
+ *  @param clientFtpSession an object of type clientFtpSession to hold session status data
+ */
 void handleFtpRequestRETR(const char* file, ClientFtpSession& clientFtpSession)
 {
+    char buffer[256];
+    char fName[strlen(file) + 1];
 
+    strcpy(fName,file);
+
+    if(clientFtpSession.isLoggedIn == false)
+
+        handleNotLoggedIn(clientFtpSession);
+
+    else
+    {
+        if(clientFtpSession.dataConnection < 0)
+        {
+            int status = sendToRemote(clientFtpSession.controlConnection, DATA_OPEN_CONNECTION_ERROR_RESPONSE, strlen(DATA_OPEN_CONNECTION_ERROR_RESPONSE));
+    
+            if(status < 0)
+
+                cout << "Encountered an error while sending data\n";
+        }
+
+        else
+        {
+            
+
+            if(strstr(fName, "/.") != NULL)
+            {
+                int status = sendToRemote(clientFtpSession.controlConnection, INVALID_PATH_RESPONSE, strlen(INVALID_PATH_RESPONSE));
+
+                if(status < 0)
+
+                    cout << "Encountered an error while sending data\n";
+            }
+
+            else if(strstr(fName, "/..") != NULL)
+            {
+                int status = sendToRemote(clientFtpSession.controlConnection, INVALID_PATH_RESPONSE, strlen(INVALID_PATH_RESPONSE));
+
+                if(status < 0)
+
+                    cout << "Encountered an error while sending data\n";
+            }
+
+            else if(strstr(fName, "*") != NULL)
+            {
+                int status = sendToRemote(clientFtpSession.controlConnection, INVALID_PATH_RESPONSE, strlen(INVALID_PATH_RESPONSE));
+
+                if(status < 0)
+
+                    cout << "Encountered an error while sending data\n";
+            }
+            
+            else if(strstr(fName, "../") != NULL)
+            {
+                int status = sendToRemote(clientFtpSession.controlConnection, INVALID_PATH_RESPONSE, strlen(INVALID_PATH_RESPONSE));
+
+                if(status < 0)
+
+                    cout << "Encountered an error while sending data\n";
+            }
+
+            else
+            {
+                int bytesSent = sendFile(file, clientFtpSession.dataConnection);
+
+                if(bytesSent > 0)
+                {
+                    sprintf(buffer, RETR_CONNECTION_CLOSE_RESPONSE, bytesSent);
+
+                    int status = sendToRemote(clientFtpSession.controlConnection, buffer, strlen(buffer));
+        
+                    if(status < 0)
+
+                        cout << "Encountered an error while sending data\n";
+
+                    closeConnection(clientFtpSession.dataConnection);
+                }
+
+                else
+                {
+                    int status = sendToRemote(clientFtpSession.controlConnection, RETR_UNAVAILABLE_ERROR_RESPONSE, strlen(RETR_UNAVAILABLE_ERROR_RESPONSE));
+
+                    if(status < 0)
+
+                        cout << "Encountered an error while sending data\n";
+                }
+                
+            }
+        }
+
+    }
 }
 
 /** @brief handles request quit

@@ -22,6 +22,13 @@
 
 using namespace std;
 
+/** @brief Enters passive mode
+ *
+ *  This function enters passive mode by opening a datalistener socket. Once a client is  
+ *  ready to connect it accepts a data connection from the client.
+ *
+ *  @param clientFtpSession an object of type clientFtpSession to hold session status data
+ */
 void enteringIntoPassive(ClientFtpSession& clientFtpSession)
 {
     bool succeded;
@@ -34,9 +41,16 @@ void enteringIntoPassive(ClientFtpSession& clientFtpSession)
         bool isTimedout = false;
         bool isReady = false;
         char response[256];
-
+/** @brief Enters passive mode
+ *
+ *  This function enters passive mode by opening a datalistener socket. Once a client is  
+ *  ready to connect it accepts a data connection from the client.
+ *
+ *  @param clientFtpSession an object of type clientFtpSession to hold session status data
+ */
         createPassiveSuccessResponse(response, clientFtpSession.dataListener);
-    
+
+        cout << "response is " << response << endl;
         int status = sendToRemote(clientFtpSession.controlConnection, response, strlen(response));
     
         if(status < 0)
@@ -77,17 +91,38 @@ void enteringIntoPassive(ClientFtpSession& clientFtpSession)
     }
 }
 
+/** @brief Starts connection listener for passive mode
+ *
+ *  This function starts a connection listener for starting passive mode by opening a datalistener socket. Updates the status 
+ *  upon success and failure.
+ *
+ *  @param clientFtpSession an object of type clientFtpSession to hold session status data
+ *  @param succeded a bollean variable denoting the status of the procedure
+ */
 void startPassiveListener(ClientFtpSession& clientFtpSession, bool& succeded)
 {
     char dataListenerPort[5];
     startListenerSocket(dataListenerPort, clientFtpSession.dataListener, succeded);
 }
 
+/** @brief leaves passive mode
+ *
+ *  This function leaves passive mode by closing the datalistener socket.
+ *
+ *  @param clientFtpSession an object of type clientFtpSession to hold session status data
+ */
 void stopPassiveListener(ClientFtpSession& clientFtpSession)
 {
     closeListenerSocket(clientFtpSession.dataListener);
 }
 
+/** @brief Creates passive success response
+ *
+ *  This function creates appropriate passive success response to send to the client 
+ *
+ *  @param response a character array that holds the response 
+ *  @param passiveListenerSockDescriptor an integer denoting passive listener socket
+ */
 void createPassiveSuccessResponse(char* response, const int passiveListenerSockDescriptor)
 {
     int portFirstDecimal = getPortFromSocketDescriptor(passiveListenerSockDescriptor) / 256;

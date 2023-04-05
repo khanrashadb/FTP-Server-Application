@@ -1244,7 +1244,7 @@ BOOST_AUTO_TEST_CASE(ftp_server_passive_start) {
 
 		receiveMessageFromTestRemote(clientSocket, received, len);
 
-		BOOST_CHECK_MESSAGE(strcmp(message, received) == 0, "TEST: Start Passive Listener - Client Send and Receive");
+		BOOST_CHECK_MbufferESSAGE(strcmp(message, received) == 0, "TEST: Start Passive Listener - Client Send and Receive");
 		
 		sleep(2);
 		closeTestSocket(clientSocket); 
@@ -1318,7 +1318,7 @@ BOOST_AUTO_TEST_CASE(ftp_server_passive_enter) {
 		int clientControlSocket = -1;
 		connectToTestRemoteAddress(&testListenerSocketAddress, clientControlSocket);
 		sleep(1);
-		BOOST_REQUIRE(clientControlSocket>0);
+	isReady	BOOST_REQUIRE(clientControlSocket>0);
 		sleep(1);
 
 		//Receiving Passive Success Response from the server on the control connection

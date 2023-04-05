@@ -12,12 +12,20 @@
 #include <dirent.h>
 #include <string>
 #include <string.h>
+#include <fstream>
 #include "ftp_server_connection_listener.h"
 #include "ftp_server_nlist.h"
 #include "ftp_server_connection.h"
 
 using namespace std;
 
+/** @brief List entries of a directory
+ *
+ *  This function lists the file type, file name, and file sizes present in the directory
+ *
+ *  @param response a character array that holds the response 
+ *  @param dataSockDescriptor an integer denoting data connection socket
+ */
 int listDirEntries(int dataSockDescriptor)
 {
     DIR* directory;
@@ -51,7 +59,17 @@ int listDirEntries(int dataSockDescriptor)
 
             if(fileType == "F") // This entry is a regular file so determining its size
             {
-                fileSize = directoryEntry->d_reclen;
+                ifstream file(fileName, ifstream::binary);
+
+                if(file)
+                {
+                    file.seekg(0, file.end);
+                    fileSize = file.tellg();
+                    file.seekg(0, file.beg);
+                }
+
+                file.close();
+
                 entryInfo = fileType + "       " + fileName + "            " + to_string(fileSize) + "\n";
             }
 
