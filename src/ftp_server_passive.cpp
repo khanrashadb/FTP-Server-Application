@@ -50,7 +50,6 @@ void enteringIntoPassive(ClientFtpSession& clientFtpSession)
  */
         createPassiveSuccessResponse(response, clientFtpSession.dataListener);
 
-        cout << "response is " << response << endl;
         int status = sendToRemote(clientFtpSession.controlConnection, response, strlen(response));
     
         if(status < 0)
