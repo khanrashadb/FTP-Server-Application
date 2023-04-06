@@ -100,7 +100,7 @@ void enteringIntoPassive(ClientFtpSession& clientFtpSession)
  */
 void startPassiveListener(ClientFtpSession& clientFtpSession, bool& succeded)
 {
-    char dataListenerPort[5];
+    char dataListenerPort[] = "5021";
     startListenerSocket(dataListenerPort, clientFtpSession.dataListener, succeded);
 }
 
