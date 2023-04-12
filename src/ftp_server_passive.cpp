@@ -41,13 +41,7 @@ void enteringIntoPassive(ClientFtpSession& clientFtpSession)
         bool isTimedout = false;
         bool isReady = false;
         char response[256];
-/** @brief Enters passive mode
- *
- *  This function enters passive mode by opening a datalistener socket. Once a client is  
- *  ready to connect it accepts a data connection from the client.
- *
- *  @param clientFtpSession an object of type clientFtpSession to hold session status data
- */
+
         createPassiveSuccessResponse(response, clientFtpSession.dataListener);
 
         int status = sendToRemote(clientFtpSession.controlConnection, response, strlen(response));
