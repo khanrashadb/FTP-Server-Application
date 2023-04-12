@@ -6,7 +6,7 @@ and handles valid client requests by taking appropriate actions.
 
 ## Technologies
 
-This application was developed in an unix environment using C++ programming language, vim and VSCode editors, gdb debugger.
+This application was developed to be used in a unix environment using C++ programming language, vim and VSCode editors, and gdb debugger.
 
 
 ## Build, Run, Test, Installation, and Uninstallation
@@ -20,8 +20,8 @@ Build:
 
 ## Usage
 
-Type make run-server to run the server application from one terminal window. Then type make eun-example-client from a different window to run the client application and connect with the server and send requests from the client and receive replies from the server.
-
+Browse to the project directory. From the project directory type make run-server to run the server application from one terminal window. Then type make run-example-client from a from different window to run the client application and connect with the server and send requests from the client and receive replies from the server.
+Type "help" on the client application window to dispaly a list of supported commands.
 
 ## Contributors
 
@@ -29,4 +29,4 @@ Type make run-server to run the server application from one terminal window. The
 
 ## License
 
-This application should be used under a gpl license and should only be used for academic and research purposes.
+GPL
